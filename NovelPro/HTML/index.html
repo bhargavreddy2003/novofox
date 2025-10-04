@@ -1,0 +1,326 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVEL PRO</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <script src="../lib/CSInterface.js"></script>
+</head>
+<script src="../lib/CSInterface.js"></script>
+<script>
+(function(){
+  function _d(s){return decodeURIComponent(escape(atob(s)));}
+  var a=document.createElement("pre");
+  a.style.cssText=_d("Zm9udDoxMnB4LzEuNCBtb25vc3BhY2U7cGFkZGluZzo4cHg7YmFja2dyb3VuZDojMTExO2NvbG9yOiMwZjA7bWF4LWhlaWdodDoxNjBweDtvdmVyZmxvdzphdXRvO2JvcmRlcjoxcHggc29saWQgIzMzMzttYXJnaW46OHB4IDA7");
+  a.id="novel_diag";
+  a.textContent=_d("Tk9WRUwgUFJPIOKAkyBDRVAgZGlhZ25vc3RpY3MK");
+  document.body.insertBefore(a,document.body.firstChild);
+  function b(m){a.textContent+=m+"\n";}
+
+  try{
+    b("window.cep:"+(window.cep?"yes":"no"));
+    b("window.cep_node:"+(window.cep_node?"yes":"no"));
+  }catch(e){b("cep check err:"+e.message);}
+
+  try{
+    if(window.cep_node){
+      b("process.versions.node:"+(window.process&&window.process.versions?window.process.versions.node:"n/a"));
+      b("process.versions.chrome:"+(window.process&&window.process.versions?window.process.versions.chrome:"n/a"));
+    }
+  }catch(e){b("process check err:"+e.message);}
+
+  try{
+    var c=new CSInterface(),r=c.getSystemPath(SystemPath.EXTENSION);
+    b("EXT root:"+r);
+    window.__NOVEL_EXT_ROOT__=r;
+  }catch(e){b("CSInterface error:"+e.message);}
+})();
+</script>
+
+<body>
+    <div id="novel-container">
+        <!-- Footer -->
+        <footer>
+            <p><a id="footerLink" href="#">
+                <img src="../images/JAGNETICS.png" style="max-width: 100%; height: auto;"></a></p>
+        </footer>
+
+<!-- LICENSE PROMPT -->
+        <div id="licensePrompt" style="display:none;">
+
+            <h4>ENTER YOUR DETAILS TO ACTIVATE</h4>
+            <input type="email" id="emailInput" placeholder="Email Address" />
+            <input type="text" id="keyInput" placeholder="Enter your license key">
+            
+            <button id="activateBtn">ACTIVATE</button>
+            <p id="licenseMessage"></p>
+        </div>
+
+
+        <!-- Main Plugin UI (hidden until license is valid) -->
+        <div id="pluginUI" style="display:none;">
+
+            <div class="border-box">
+                <!-- <button id="resetLicense">Reset License (Dev)</button> -->
+
+                <!-- Brightness Control -->
+                <div class="label-box"><label class="disabled"></label></div>
+                <input disabled type="range" id="brightness" min="-150" max="150" value="0" class="control">
+
+                <!-- Grain Control -->
+                <div class="label-box"><label class="disabled"></label></div>
+                <input disabled type="range" id="grain" min="0" max="100" value="20" class="control">
+
+                <div class="dropdown-container">
+                    <div class="dropdown-group">
+                        <select disabled id="fpsDropdown" class="control">
+                            <option value="0" selected>FPS_OFF</option>
+                            <option value="8">8_FPS</option>
+                            <option value="12">12_FPS</option>
+                            <option value="24">24_FPS</option>
+                        </select>
+
+                        <select disabled id="shakeDropdown">
+                            <option value="SHAKE LOW" selected>SHAKE_LOW</option>
+                            <option value="SHAKE MID">SHAKE_MID</option>
+                            <option value="SHAKE HIGH">SHAKE_HIGH</option>
+                            <option value="SHAKE OFF">SHAKE_OFF</option>
+                        </select>
+                    </div>
+                
+                    <div class="dropdown-group">
+                        <select disabled id="colorDropdown" class="control">
+                            <option value="[1, 1, 1]">TINT_B/W</option>
+                            <option value="[1, 0, 0]">TINT_RED</option>
+                            <option value="[0, 1, 0]">TINT_GREEN</option>
+                            <option value="[0, 0, 1]">TINT_BLUE</option>
+                            <option value="original">TINT_OFF</option>
+                        </select>
+        
+                        <select disabled id="rgbDropdown">
+                            <option value="OFF" selected>RGB_OFF</option>
+                            <option value="MONO">RGB_01</option>
+                            <option value="OVER">RGB_02</option>
+                            <option value="SIDE">RGB_03</option>
+                        </select>
+                    </div>
+
+                    <!-- Toggles -->
+                    <div class="toggle-group">
+                        <button disabled id="flickerToggle" class="toggle-btn">FLICKER</button>
+                        <button disabled id="invertToggle" class="toggle-btn">INVERT</button>
+                    </div>
+
+                    <!-- Reset + Launch Buttons -->
+                    <div id="controls">
+                        <div class="section">
+                            <button disabled id="resetButton" class="control">↺</button>
+                            <button disabled id="eyeToggle" class="toggle-btn">FX</button>
+                            <button disabled id="cancelButton" class="control">✖</button>
+                        
+                            <button id="launch" class="main-btn"> LAUNCH </button>
+                            <button id="confirm" class="main-btn hidden">CONFIRM</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- end pluginUI -->
+    </div>
+
+<script>
+(function(){
+  // tiny base64 decoder (safe fallback to original if not b64)
+  function _b64(s){try{return decodeURIComponent(escape(atob(s)))}catch(_){return s}}
+  // mixed table: some entries are b64, some plain — decoder handles both
+  function _tbl(){return [
+    "bm92ZWxwcm8=",                            // 0 -> "novelpro"
+    "d5tlmEVxWGRjD_Jctu267g==",                // 1 -> PRODUCT_ID (kept plain)
+    "aHR0cHM6Ly9hcGkuZ3Vtcm9hZC5jb20vdjIvbGljZW5zZXMvdmVyaWZ5", // 2
+    "YXBwbGljYXRpb24veC13d3ctZm9ybS11cmxlbmNvZGVk",             // 3
+    "bm92ZWxfZGV2aWNlX2lk",                    // 4
+    "bm92ZWxfcmVnaXN0ZXJlZF8=",                // 5
+    "bm92ZWxfZW1haWw=",                        // 6
+    "bm92ZWxfa2V5",                            // 7
+    "bGljZW5zZVByb21wdA==",                    // 8
+    "cGx1Z2luVUk=",                            // 9
+    "YWN0aXZhdGVCdG4=",                        // 10
+    "ZW1haWxJbnB1dA==",                        // 11
+    "a2V5SW5wdXQ=",                            // 12
+    "bGljZW5zZU1lc3NhZ2U=",                    // 13
+    "QWN0aXZhdGVk",                            // 14
+    "RW1haWwgYW5kIGtleSDigJQgZG9u4oCZdCBtYXRjaA==", // 15
+    "SW52YWxpZCBsaWNlbnNlIGtleQ==",            // 16
+    "QWN0aXZhdGlvbiBsaW1pdCByZWFjaGVk",        // 17
+    "Q29ubmVjdGlvbiBlcnJvcg==",                // 18
+    "dmVyaWZ5aW5n4oCm",                        // 19  (verifying…)
+    "bmV0LWVycm9y",                            // 20
+    "YmFkLXN0YXR1cw==",                        // 21
+    "YmFkLWpzb24=",                            // 22
+    "Y2xpY2s=",                                // 23
+    "Q1NJbnRlcmZhY2U=",                        // 24
+    "U3lzdGVtUGF0aA==",                        // 25
+    "RVhURU5TSU9O",                            // 26
+    "Z2V0U3lzdGVtUGF0aA==",                    // 27
+    "X19OT1ZFTF9FWFRfUk9PVF9f"                 // 28
+  ];}
+  var _S=_tbl(),_G=function(i){return _b64(_S[i])};
+
+  // --- CONFIG (hidden via indirection) ---
+  var PRODUCT_PERMALINK=_G(0), PRODUCT_ID=_G(1), ADMIN_PASS=_b64("SkFHQURNSU40NQ==");
+
+  // --- helpers ---
+  function _clean(s){return (s||"").replace(/\u200B/g,"").trim()}
+  function _q(id){return document.getElementById(id)}
+
+  // --- gumroad verify (xhr, no fetch) ---
+  function _verify(obj){
+    return new Promise(function(res){
+      try{
+        var body="",k;
+        for(k in obj){body&&(body+="&"), body+=encodeURIComponent(k)+"="+encodeURIComponent(obj[k])}
+        var x=new XMLHttpRequest();
+        x.open("POST",_G(2),true);
+        x.setRequestHeader("Content-Type",_G(3));
+        x.onreadystatechange=function(){
+          if(x.readyState!==4) return;
+          if(x.status>=200&&x.status<300){
+            try{res(JSON.parse(x.responseText||"{}"))}
+            catch(_){res({success:false,message:_G(22)})} // bad-json
+          }else{res({success:false,message:_G(21)})}       // bad-status
+        };
+        x.onerror=function(){res({success:false,message:_G(20)})}; // net-error
+        x.send(body);
+      }catch(_){res({success:false,message:"exception"})}
+    });
+  }
+
+  // --- device id (stable) ---
+  function _deviceId(){
+    var key=_G(4), id=localStorage.getItem(key);
+    if(!id){ id="dev-"+Math.random().toString(36).slice(2); localStorage.setItem(key,id); }
+    return Promise.resolve(id);
+  }
+
+  // --- interpret gumroad response ---
+  function _interpret(d, emailLower){
+    if(!d||d.success!==true) return {status:"invalid"};
+    var pEmail=(d.purchase&&d.purchase.email||"").toLowerCase();
+    if(emailLower && pEmail && pEmail!==emailLower) return {status:"email_mismatch"};
+    var uses=(d.uses!=null?d.uses:(d.purchase&&d.purchase.uses))||0;
+    return {status:"ok",uses:uses|0};
+  }
+
+  function _validate(email,key,devId){
+    var e=_clean(email).toLowerCase(), k=_clean(key),
+        reg=_G(5)+devId+"_"+k, already=localStorage.getItem(reg)==="1";
+    function _do(p){return _verify(p).then(function(d){return _interpret(d,e)})}
+
+    if(k===ADMIN_PASS) return Promise.resolve({status:"ok"});
+
+    return _do({product_permalink:PRODUCT_PERMALINK,license_key:k})
+      .then(function(r){return r.status==="invalid"?_do({product_id:PRODUCT_ID,license_key:k}):r})
+      .then(function(r){
+        if(r.status!=="ok") return r;
+        if(already) return r;
+        return _verify({product_permalink:PRODUCT_PERMALINK,license_key:k,increment_uses_count:"true"})
+          .then(function(di){
+            if(!(di&&di.success)){
+              return _verify({product_id:PRODUCT_ID,license_key:k,increment_uses_count:"true"}).then(function(){return r});
+            }
+            return r;
+          })
+          .then(function(final){
+            if(final.status==="ok") localStorage.setItem(reg,"1");
+            return final;
+          });
+      })
+      .catch(function(){return {status:"network"}});
+  }
+
+  // --- saved license quick check ---
+  function _checkSaved(){
+    var em=localStorage.getItem(_G(6)), ky=localStorage.getItem(_G(7));
+    if(em&&ky){ return _deviceId().then(function(id){return _validate(em,ky,id)}); }
+    return Promise.resolve({status:"invalid"});
+  }
+
+  // --- UI helpers (inlined, minimal names) ---
+  function _showLicense(msg){
+    var lp=_q(_G(8)), ui=_q(_G(9));
+    if(ui) ui.style.display="none";
+    if(lp){
+      lp.style.display="flex";
+      var m=_q(_G(13)); if(m) m.innerText=msg||"";
+    }
+  }
+  function _showUI(){
+    var ui=_q(_G(9)), lp=_q(_G(8));
+    if(lp) lp.style.display="none";
+    if(ui) ui.style.display="block";
+  }
+
+  // --- init / DOM wiring ---
+  document.addEventListener("DOMContentLoaded",function(){
+    _showLicense("");
+
+    var btn=_q(_G(10)), em=_q(_G(11)), ky=_q(_G(12)), msg=_q(_G(13));
+
+    function _msg(s){
+      if(!msg) return;
+      msg.innerText = s==="ok"?_G(14)
+        : s==="email_mismatch"?_G(15)
+        : s==="invalid"?_G(16)
+        : s==="network"?_G(18)
+        : _G(16);
+    }
+    function _toggle(){
+      btn.disabled = !(em.value.trim() && ky.value.trim());
+    }
+    _toggle();
+    em.addEventListener("input",_toggle);
+    ky.addEventListener("input",_toggle);
+
+    if(btn){
+      btn.addEventListener(_G(23),function(){
+        var e=em.value||"", k=ky.value||"", old=btn.innerText;
+        btn.disabled=true; btn.innerText=_G(19); if(msg) msg.innerText="";
+        _deviceId()
+          .then(function(id){return _validate(e,k,id)})
+          .then(function(r){
+            if(r.status==="ok"){
+              localStorage.setItem(_G(6),_clean(e));
+              localStorage.setItem(_G(7),_clean(k));
+              _msg("ok");
+              setTimeout(_showUI,400);
+            }else{
+              _msg(r.status);
+            }
+          })
+          .catch(function(){_msg("network")})
+          .finally(function(){btn.innerText=old; _toggle()});
+      });
+    }
+
+    _checkSaved()
+      .then(function(r){ r.status==="ok"?_showUI():_showLicense(""); })
+      .catch(function(){ _showLicense(""); });
+  });
+
+  // --- (optional) lightweight anti-tamper (no breakage) ---
+  try{
+    var _cs = new (window[_G(24)]||function(){})();
+    var _sp = (window[_G(25)]||{})[_G(26)];
+    if(_sp && typeof _cs[_G(27)]==="function"){
+      var root=_cs[_G(27)](_sp[_G(26)]);
+      if(root) window[_G(28)]=root; // __NOVEL_EXT_ROOT__
+    }
+  }catch(_){}
+})();
+</script>
+
+
+    <script defer src="../JS/main.js"></script>
+</body>
+</html>
